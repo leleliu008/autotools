@@ -647,7 +647,7 @@ install_the_given_package() {
     unset PACKAGE_INSTALL
     unset PACKAGE_DOTWEAK
 
-    package_info_$PACKAGE_NAME
+    package_info_$1
 
     #########################################################################################
 
