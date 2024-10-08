@@ -18,7 +18,7 @@ jobs:
 
           cat > QUERY <<EOF
           {
-            repository(owner: "leleliu008", name: "autotools-prebuild") {
+            repository(owner: "leleliu008", name: "autotools") {
                 latestRelease {
                   name
                 }
