@@ -16,7 +16,7 @@ run() {
 }
 
 __setup_freebsd() {
-    run sudo pkg install -y coreutils cmake gmake gcc pkgconf
+    run sudo pkg install -y coreutils gmake gcc pkgconf
 
     run sudo ln -sf /usr/local/bin/gln        /usr/bin/ln
     run sudo ln -sf /usr/local/bin/gmake      /usr/bin/make
@@ -31,7 +31,7 @@ __setup_freebsd() {
 }
 
 __setup_openbsd() {
-    run sudo pkg_add coreutils cmake gmake gcc%11 pkgconf libarchive
+    run sudo pkg_add coreutils gmake gcc%11 pkgconf libarchive
 
     run sudo ln -sf /usr/local/bin/gln        /usr/bin/ln
     run sudo ln -sf /usr/local/bin/gmake      /usr/bin/make
@@ -47,7 +47,7 @@ __setup_openbsd() {
 
 __setup_netbsd() {
     run sudo pkgin -y update
-    run sudo pkgin -y install coreutils cmake gmake pkg-config bsdtar
+    run sudo pkgin -y install coreutils gmake pkg-config bsdtar
 
     run sudo ln -sf /usr/pkg/bin/gln        /usr/bin/ln
     run sudo ln -sf /usr/pkg/bin/gmake      /usr/bin/make
@@ -71,13 +71,13 @@ __setup_linux() {
     case $ID in
         ubuntu)
             run apt-get -y update
-            run apt-get -y install curl libarchive-tools cmake make pkg-config g++ linux-headers-generic
+            run apt-get -y install curl libarchive-tools make pkg-config g++ linux-headers-generic
 
             run ln -sf /usr/bin/make /usr/bin/gmake
             ;;
         alpine)
             run apk update
-            run apk add libarchive-tools cmake make pkgconf g++ linux-headers
+            run apk add libarchive-tools make pkgconf g++ linux-headers
     esac
 }
 
