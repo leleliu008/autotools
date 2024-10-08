@@ -71,22 +71,17 @@ __setup_linux() {
     case $ID in
         ubuntu)
             run apt-get -y update
-            run apt-get -y install curl xz-utils cmake make pkg-config g++ linux-headers-generic
+            run apt-get -y install curl libarchive-tools cmake make pkg-config g++ linux-headers-generic
 
             run ln -sf /usr/bin/make /usr/bin/gmake
             ;;
         alpine)
             run apk update
-            run apk add cmake make pkgconf g++ linux-headers libarchive-tools
+            run apk add libarchive-tools cmake make pkgconf g++ linux-headers
     esac
 }
 
 unset IFS
-
-PREFIX="/opt/$1"
-
-[ -z "$GID" ] && GID="$(id -g -n)"
-[ -z "$UID" ] && UID="$(id -u -n)"
 
 unset sudo
 
@@ -96,14 +91,12 @@ TARGET_OS_KIND="$(printf '%s\n' "$1" | cut -d- -f3)"
 
 __setup_$TARGET_OS_KIND
 
-run $sudo install -d -g "$GID" -o "$UID" "$PREFIX"
+PREFIX="/opt/$1"
+
+run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 
 [ -f cacert.pem ] && run export SSL_CERT_FILE="$PWD/cacert.pem"
 
 run ./xbuilder install automake libtool pkgconf gmake --prefix="$PREFIX"
 
-if command -v bsdtar > /dev/null ; then
-    run bsdtar cvaPf "$1.tar.xz" "$PREFIX"
-else
-    run    tar cvJPf "$1.tar.xz" "$PREFIX"
-fi
+run bsdtar cvaPf "$1.tar.xz" "$PREFIX"
