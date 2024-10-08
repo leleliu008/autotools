@@ -639,11 +639,15 @@ configure() {
 install_the_given_package() {
     [ -z "$1" ] && abort 1 "install_the_given_package <PACKAGE-NAME> , <PACKAGE-NAME> is unspecified."
 
+    unset PACKAGE_SRC_URL
     unset PACKAGE_SRC_URI
+    unset PACKAGE_SRC_SHA
     unset PACKAGE_DEP_PKG
     unset PACKAGE_DOPATCH
     unset PACKAGE_INSTALL
     unset PACKAGE_DOTWEAK
+
+    package_info_$PACKAGE_NAME
 
     #########################################################################################
 
@@ -658,19 +662,7 @@ install_the_given_package() {
 
     #########################################################################################
 
-    case $1 in
-        libtool)    PACKAGE_TYPE=2 ;;
-        lib*)       PACKAGE_TYPE=1 ;;
-        *)          PACKAGE_TYPE=2 ;;
-    esac
-
-    #########################################################################################
-
-    if [ "$PACKAGE_TYPE" = 1 ] ; then
-        PACKAGE_INSTALL_DIR="$SESSION_DIR/3rdroot"
-    else
-        PACKAGE_INSTALL_DIR="$PACKAGE_INSTALL_ROOT"
-    fi
+    PACKAGE_INSTALL_DIR="$PACKAGE_INSTALL_ROOT"
 
     #########################################################################################
 
@@ -693,36 +685,33 @@ install_the_given_package() {
     export CPPFLAGS="-I$PACKAGE_WORKING_DIR/include $CPPFLAGS"
     export LDFLAGS="-L$PACKAGE_WORKING_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
 
-    for DEPENDENT_PACKAGE_INSTALLED_DIR in "$SESSION_DIR/3rdroot" "$PACKAGE_INSTALL_ROOT"
+    if [ -d  "$PACKAGE_INSTALL_ROOT/include" ] ; then
+        CPPFLAGS="-I$PACKAGE_INSTALL_ROOT/include $CPPFLAGS"
+    fi
+
+    if [ -d  "$PACKAGE_INSTALL_ROOT/lib" ] ; then
+        LDFLAGS="-L$PACKAGE_INSTALL_ROOT/lib -Wl,-rpath,$PACKAGE_INSTALL_ROOT/lib $LDFLAGS"
+    fi
+
+    if [ -d  "$PACKAGE_INSTALL_ROOT/bin" ] ; then
+        PATH="$PACKAGE_INSTALL_ROOT/bin:$PATH"
+    fi
+
+    if [ -d  "$PACKAGE_INSTALL_ROOT/sbin" ] ; then
+        PATH="$PACKAGE_INSTALL_ROOT/sbin:$PATH"
+    fi
+
+    if [ -d          "$PACKAGE_INSTALL_ROOT/share/aclocal" ] ; then
+        ACLOCAL_PATH="$PACKAGE_INSTALL_ROOT/share/aclocal:$ACLOCAL_PATH"
+    fi
+
+    for d in lib share
     do
-        if [ -d  "$DEPENDENT_PACKAGE_INSTALLED_DIR/include" ] ; then
-            CPPFLAGS="-I$DEPENDENT_PACKAGE_INSTALLED_DIR/include $CPPFLAGS"
+        DEPENDENT_PACKAGE_PKGCONF_DIR="$PACKAGE_INSTALL_ROOT/$d/pkgconfig"
+
+        if [ -d "$DEPENDENT_PACKAGE_PKGCONF_DIR" ] ; then
+            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$DEPENDENT_PACKAGE_PKGCONF_DIR"
         fi
-
-        if [ -d  "$DEPENDENT_PACKAGE_INSTALLED_DIR/lib" ] ; then
-            LDFLAGS="-L$DEPENDENT_PACKAGE_INSTALLED_DIR/lib -Wl,-rpath,$DEPENDENT_PACKAGE_INSTALLED_DIR/lib $LDFLAGS"
-        fi
-
-        if [ -d  "$DEPENDENT_PACKAGE_INSTALLED_DIR/bin" ] ; then
-            PATH="$DEPENDENT_PACKAGE_INSTALLED_DIR/bin:$PATH"
-        fi
-
-        if [ -d  "$DEPENDENT_PACKAGE_INSTALLED_DIR/sbin" ] ; then
-            PATH="$DEPENDENT_PACKAGE_INSTALLED_DIR/sbin:$PATH"
-        fi
-
-        if [ -d          "$DEPENDENT_PACKAGE_INSTALLED_DIR/share/aclocal" ] ; then
-            ACLOCAL_PATH="$DEPENDENT_PACKAGE_INSTALLED_DIR/share/aclocal:$ACLOCAL_PATH"
-        fi
-
-        for d in lib share
-        do
-            DEPENDENT_PACKAGE_PKGCONF_DIR="$DEPENDENT_PACKAGE_INSTALLED_DIR/$d/pkgconfig"
-
-            if [ -d "$DEPENDENT_PACKAGE_PKGCONF_DIR" ] ; then
-                PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$DEPENDENT_PACKAGE_PKGCONF_DIR"
-            fi
-        done
     done
 
     #########################################################################################
@@ -821,6 +810,16 @@ package_info_automake() {
     PACKAGE_SRC_SHA='f01d58cd6d9d77fbdca9eb4bbd5ead1988228fdb73d6f7a201f5f8d6b118b469'
     PACKAGE_DEP_PKG='perl gm4 autoconf'
     PACKAGE_INSTALL='configure'
+}
+
+package_info_libtool() {
+    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz'
+    PACKAGE_SRC_SHA='4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d'
+    PACKAGE_INSTALL='configure --enable-ltdl-install'
+    PACKAGE_DOTWEAK='
+run ln -s libtool    bin/glibtool
+run ln -s libtoolize bin/glibtoolize
+'
 }
 
 package_info_gm4() {
@@ -967,13 +966,21 @@ case $1 in
         if [ "$2" = -v ] ; then
             for PACKAGE_NAME in $PACKAGE_NAMES
             do
+                unset PACKAGE_SRC_URL
                 unset PACKAGE_SRC_URI
+                unset PACKAGE_SRC_SHA
                 unset PACKAGE_DEP_PKG
                 unset PACKAGE_DOPATCH
                 unset PACKAGE_INSTALL
                 unset PACKAGE_DOTWEAK
 
-                printf '%-10s: %s\n' "$PACKAGE_NAME" "$PACKAGE_SRC_URL"
+                package_info_$PACKAGE_NAME
+
+                cat <<EOF
+$PACKAGE_NAME:
+    src-url: $PACKAGE_SRC_URL
+    src-sha: $PACKAGE_SRC_SHA
+EOF
             done
         else
             printf '%s\n' $PACKAGE_NAMES
