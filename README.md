@@ -1,1 +1,1 @@
-# autotools-prebuild
+# autotools
