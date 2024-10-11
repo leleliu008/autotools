@@ -70,10 +70,10 @@ __setup_linux() {
 
     case $ID in
         ubuntu)
-            run apt-get -y update
-            run apt-get -y install curl libarchive-tools make g++
+            run $sudo apt-get -y update
+            run $sudo apt-get -y install curl libarchive-tools make g++ patchelf
 
-            run ln -sf /usr/bin/make /usr/bin/gmake
+            run $sudo ln -sf /usr/bin/make /usr/bin/gmake
             ;;
         alpine)
             run apk update
@@ -98,5 +98,11 @@ run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 [ -f cacert.pem ] && run export SSL_CERT_FILE="$PWD/cacert.pem"
 
 run ./xbuilder install automake libtool pkgconf gmake --prefix="$PREFIX"
+
+run cp -L `gcc -print-file-name=libcrypt.so.1` "$PREFIX/lib/"
+LIBPERL_DIR="$(patchelf --print-rpath          "$PREFIX/bin/perl")"
+LIBPERL_PATH="$LIBPERL_DIR/libperl.so"
+run chmod +w "$LIBPERL_PATH"
+run patchelf --set-rpath "$PREFIX/lib" "$LIBPERL_PATH"
 
 run bsdtar cvaPf "$1.tar.xz" "$PREFIX"
