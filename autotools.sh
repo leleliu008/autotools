@@ -16,49 +16,49 @@ run() {
 }
 
 __setup_freebsd() {
-    run sudo pkg install -y coreutils gmake gcc
+    run $sudo pkg install -y coreutils gmake gcc
 
-    run sudo ln -sf /usr/local/bin/gln        /usr/bin/ln
-    run sudo ln -sf /usr/local/bin/gmake      /usr/bin/make
-    run sudo ln -sf /usr/local/bin/gstat      /usr/bin/stat
-    run sudo ln -sf /usr/local/bin/gdate      /usr/bin/date
-    run sudo ln -sf /usr/local/bin/gnproc     /usr/bin/nproc
-    run sudo ln -sf /usr/local/bin/gbase64    /usr/bin/base64
-    run sudo ln -sf /usr/local/bin/gunlink    /usr/bin/unlink
-    run sudo ln -sf /usr/local/bin/ginstall   /usr/bin/install
-    run sudo ln -sf /usr/local/bin/grealpath  /usr/bin/realpath
-    run sudo ln -sf /usr/local/bin/gsha256sum /usr/bin/sha256sum
+    run $sudo ln -sf /usr/local/bin/gln        /usr/bin/ln
+    run $sudo ln -sf /usr/local/bin/gmake      /usr/bin/make
+    run $sudo ln -sf /usr/local/bin/gstat      /usr/bin/stat
+    run $sudo ln -sf /usr/local/bin/gdate      /usr/bin/date
+    run $sudo ln -sf /usr/local/bin/gnproc     /usr/bin/nproc
+    run $sudo ln -sf /usr/local/bin/gbase64    /usr/bin/base64
+    run $sudo ln -sf /usr/local/bin/gunlink    /usr/bin/unlink
+    run $sudo ln -sf /usr/local/bin/ginstall   /usr/bin/install
+    run $sudo ln -sf /usr/local/bin/grealpath  /usr/bin/realpath
+    run $sudo ln -sf /usr/local/bin/gsha256sum /usr/bin/sha256sum
 }
 
 __setup_openbsd() {
-    run sudo pkg_add coreutils gmake gcc%11 libarchive
+    run $sudo pkg_add coreutils gmake gcc%11 libarchive
 
-    run sudo ln -sf /usr/local/bin/gln        /usr/bin/ln
-    run sudo ln -sf /usr/local/bin/gmake      /usr/bin/make
-    run sudo ln -sf /usr/local/bin/gstat      /usr/bin/stat
-    run sudo ln -sf /usr/local/bin/gdate      /usr/bin/date
-    run sudo ln -sf /usr/local/bin/gnproc     /usr/bin/nproc
-    run sudo ln -sf /usr/local/bin/gbase64    /usr/bin/base64
-    run sudo ln -sf /usr/local/bin/gunlink    /usr/bin/unlink
-    run sudo ln -sf /usr/local/bin/ginstall   /usr/bin/install
-    run sudo ln -sf /usr/local/bin/grealpath  /usr/bin/realpath
-    run sudo ln -sf /usr/local/bin/gsha256sum /usr/bin/sha256sum
+    run $sudo ln -sf /usr/local/bin/gln        /usr/bin/ln
+    run $sudo ln -sf /usr/local/bin/gmake      /usr/bin/make
+    run $sudo ln -sf /usr/local/bin/gstat      /usr/bin/stat
+    run $sudo ln -sf /usr/local/bin/gdate      /usr/bin/date
+    run $sudo ln -sf /usr/local/bin/gnproc     /usr/bin/nproc
+    run $sudo ln -sf /usr/local/bin/gbase64    /usr/bin/base64
+    run $sudo ln -sf /usr/local/bin/gunlink    /usr/bin/unlink
+    run $sudo ln -sf /usr/local/bin/ginstall   /usr/bin/install
+    run $sudo ln -sf /usr/local/bin/grealpath  /usr/bin/realpath
+    run $sudo ln -sf /usr/local/bin/gsha256sum /usr/bin/sha256sum
 }
 
 __setup_netbsd() {
-    run sudo pkgin -y update
-    run sudo pkgin -y install coreutils gmake bsdtar
+    run $sudo pkgin -y update
+    run $sudo pkgin -y install coreutils gmake bsdtar
 
-    run sudo ln -sf /usr/pkg/bin/gln        /usr/bin/ln
-    run sudo ln -sf /usr/pkg/bin/gmake      /usr/bin/make
-    run sudo ln -sf /usr/pkg/bin/gstat      /usr/bin/stat
-    run sudo ln -sf /usr/pkg/bin/gdate      /usr/bin/date
-    run sudo ln -sf /usr/pkg/bin/gnproc     /usr/bin/nproc
-    run sudo ln -sf /usr/pkg/bin/gbase64    /usr/bin/base64
-    run sudo ln -sf /usr/pkg/bin/gunlink    /usr/bin/unlink
-    run sudo ln -sf /usr/pkg/bin/ginstall   /usr/bin/install
-    run sudo ln -sf /usr/pkg/bin/grealpath  /usr/bin/realpath
-    run sudo ln -sf /usr/pkg/bin/gsha256sum /usr/bin/sha256sum
+    run $sudo ln -sf /usr/pkg/bin/gln        /usr/bin/ln
+    run $sudo ln -sf /usr/pkg/bin/gmake      /usr/bin/make
+    run $sudo ln -sf /usr/pkg/bin/gstat      /usr/bin/stat
+    run $sudo ln -sf /usr/pkg/bin/gdate      /usr/bin/date
+    run $sudo ln -sf /usr/pkg/bin/gnproc     /usr/bin/nproc
+    run $sudo ln -sf /usr/pkg/bin/gbase64    /usr/bin/base64
+    run $sudo ln -sf /usr/pkg/bin/gunlink    /usr/bin/unlink
+    run $sudo ln -sf /usr/pkg/bin/ginstall   /usr/bin/install
+    run $sudo ln -sf /usr/pkg/bin/grealpath  /usr/bin/realpath
+    run $sudo ln -sf /usr/pkg/bin/gsha256sum /usr/bin/sha256sum
 }
 
 __setup_macos() {
@@ -72,12 +72,11 @@ __setup_linux() {
         ubuntu)
             run $sudo apt-get -y update
             run $sudo apt-get -y install curl libarchive-tools make g++ patchelf
-
             run $sudo ln -sf /usr/bin/make /usr/bin/gmake
             ;;
         alpine)
-            run apk update
-            run apk add libarchive-tools make g++
+            run $sudo apk update
+            run $sudo apk add libarchive-tools make g++
     esac
 }
 
