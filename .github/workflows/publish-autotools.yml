@@ -63,7 +63,7 @@ jobs:
           operating_system: freebsd
           version: ${{ matrix.target-version }}
           shell: bash
-          run: ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-freebsd-${{ matrix.target-version }}-amd64
+          run: ./pack.sh ${{ needs.check.outputs.release-version }} freebsd-${{ matrix.target-version }}-amd64
 
       - uses: actions/upload-artifact@v4
         with:
@@ -90,7 +90,7 @@ jobs:
           operating_system: openbsd
           version: ${{ matrix.target-version }}
           shell: bash
-          run: ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-openbsd-${{ matrix.target-version }}-amd64
+          run: ./pack.sh ${{ needs.check.outputs.release-version }} openbsd-${{ matrix.target-version }}-amd64
 
       - uses: actions/upload-artifact@v4
         with:
@@ -118,7 +118,7 @@ jobs:
           operating_system: netbsd
           version: ${{ matrix.target-version }}
           shell: bash
-          run: ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-netbsd-${{ matrix.target-version }}-amd64
+          run: ./pack.sh ${{ needs.check.outputs.release-version }} netbsd-${{ matrix.target-version }}-amd64
 
       - uses: actions/upload-artifact@v4
         with:
@@ -140,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-macos-${{ matrix.target-version }}-arm64
+      - run: ./pack.sh ${{ needs.check.outputs.release-version }} macos-${{ matrix.target-version }}-arm64
 
       - uses: actions/upload-artifact@v4
         with:
@@ -162,7 +162,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-macos-${{ matrix.target-version }}-x86_64
+      - run: ./pack.sh ${{ needs.check.outputs.release-version }} macos-${{ matrix.target-version }}-x86_64
 
       - uses: actions/upload-artifact@v4
         with:
@@ -186,7 +186,7 @@ jobs:
 
       - run: |
           cat > run.sh <<EOF
-          ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-linux-glibc-${{ matrix.target-arch }}
+          ./pack.sh ${{ needs.check.outputs.release-version }} linux-glibc-${{ matrix.target-arch }}
           EOF
 
           chmod +x run.sh
@@ -232,7 +232,7 @@ jobs:
 
       - run: |
           cat > run.sh <<EOF
-          ./autotools.sh autotools-${{ needs.check.outputs.release-version }}-linux-musl-${{ matrix.target-arch }}
+          ./pack.sh ${{ needs.check.outputs.release-version }} linux-musl-${{ matrix.target-arch }}
           EOF
 
           chmod +x run.sh

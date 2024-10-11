@@ -86,11 +86,12 @@ unset sudo
 
 [ "$(id -u)" -eq 0 ] || sudo=sudo
 
-TARGET_OS_KIND="$(printf '%s\n' "$1" | cut -d- -f3)"
+TARGET_OS_KIND="${2%%-*}"
 
 __setup_$TARGET_OS_KIND
 
-PREFIX="/opt/$1"
+XXXXXX="autotools-$1-$2"
+PREFIX="/opt/$XXXXXX"
 
 run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 
@@ -98,10 +99,13 @@ run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 
 run ./xbuilder install automake libtool pkgconf gmake --prefix="$PREFIX"
 
-run cp -L `gcc -print-file-name=libcrypt.so.1` "$PREFIX/lib/"
-LIBPERL_DIR="$(patchelf --print-rpath          "$PREFIX/bin/perl")"
-LIBPERL_PATH="$LIBPERL_DIR/libperl.so"
-run chmod +w "$LIBPERL_PATH"
-run patchelf --set-rpath "$PREFIX/lib" "$LIBPERL_PATH"
+case $2 in
+    linux-glibc-*)
+        run cp -L `gcc -print-file-name=libcrypt.so.1` "$PREFIX/lib/"
+        LIBPERL_DIR="$(patchelf --print-rpath          "$PREFIX/bin/perl")"
+        LIBPERL_PATH="$LIBPERL_DIR/libperl.so"
+        run chmod +w "$LIBPERL_PATH"
+        run patchelf --set-rpath "$PREFIX/lib" "$LIBPERL_PATH"
+esac
 
-run bsdtar cvaPf "$1.tar.xz" "$PREFIX"
+run bsdtar cvaPf "$XXXXXX.tar.xz" "$PREFIX"
