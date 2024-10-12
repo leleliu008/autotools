@@ -299,7 +299,7 @@ inspect_install_arguments() {
 
     unset SESSION_DIR
     unset DOWNLOAD_DIR
-    unset PACKAGE_INSTALL_ROOT
+    unset PACKAGE_INSTALL_DIR
 
     unset DUMP_ENV
     unset DUMP_HTTP
@@ -359,11 +359,11 @@ inspect_install_arguments() {
                 esac
                 ;;
             --prefix=*)
-                PACKAGE_INSTALL_ROOT="${1#*=}"
+                PACKAGE_INSTALL_DIR="${1#*=}"
 
-                case $PACKAGE_INSTALL_ROOT in
+                case $PACKAGE_INSTALL_DIR in
                     /*) ;;
-                    *)  PACKAGE_INSTALL_ROOT="$PWD/$PACKAGE_INSTALL_ROOT"
+                    *)  PACKAGE_INSTALL_DIR="$PWD/$PACKAGE_INSTALL_DIR"
                 esac
                 ;;
             -j) shift
@@ -389,8 +389,8 @@ inspect_install_arguments() {
         DOWNLOAD_DIR="$HOME/.xbuilder/downloads"
     fi
 
-    if [ -z "$PACKAGE_INSTALL_ROOT" ] ; then
-        PACKAGE_INSTALL_ROOT="$HOME/.xbuilder/installed"
+    if [ -z "$PACKAGE_INSTALL_DIR" ] ; then
+        PACKAGE_INSTALL_DIR="$HOME/.xbuilder/installed"
     fi
 
     #########################################################################################
@@ -512,7 +512,7 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    LDFLAGS="$LDFLAGS -Wl,-rpath,$PACKAGE_INSTALL_ROOT/lib"
+    LDFLAGS="$LDFLAGS -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib"
 
     #########################################################################################
 
@@ -605,10 +605,6 @@ install_the_given_package() {
 
     #########################################################################################
 
-    PACKAGE_INSTALL_DIR="$PACKAGE_INSTALL_ROOT"
-
-    #########################################################################################
-
     if [ -f "$PACKAGE_INSTALL_DIR/$1.yml" ] ; then
         note "package '$1' already has been installed, skipped."
         return 0
@@ -616,20 +612,20 @@ install_the_given_package() {
 
     #########################################################################################
 
-    if [ -d        "$PACKAGE_INSTALL_ROOT/include" ] ; then
-        CPPFLAGS="-I$PACKAGE_INSTALL_ROOT/include $CPPFLAGS"
+    if [ -d        "$PACKAGE_INSTALL_DIR/include" ] ; then
+        CPPFLAGS="-I$PACKAGE_INSTALL_DIR/include $CPPFLAGS"
     fi
 
-    if [ -d       "$PACKAGE_INSTALL_ROOT/lib" ] ; then
-        LDFLAGS="-L$PACKAGE_INSTALL_ROOT/lib $LDFLAGS"
+    if [ -d       "$PACKAGE_INSTALL_DIR/lib" ] ; then
+        LDFLAGS="-L$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
     fi
 
-    if [ -d  "$PACKAGE_INSTALL_ROOT/bin" ] ; then
-        PATH="$PACKAGE_INSTALL_ROOT/bin:$PATH"
+    if [ -d  "$PACKAGE_INSTALL_DIR/bin" ] ; then
+        PATH="$PACKAGE_INSTALL_DIR/bin:$PATH"
     fi
 
-    if [ -d  "$PACKAGE_INSTALL_ROOT/sbin" ] ; then
-        PATH="$PACKAGE_INSTALL_ROOT/sbin:$PATH"
+    if [ -d  "$PACKAGE_INSTALL_DIR/sbin" ] ; then
+        PATH="$PACKAGE_INSTALL_DIR/sbin:$PATH"
     fi
 
     #########################################################################################
@@ -912,13 +908,13 @@ EOF
             '') abort 1 'xbuilder exec <CMD> , <CMD> is unspecified.'
                 ;;
             --prefix=*)
-                PACKAGE_INSTALL_ROOT="${1#*=}"
+                PACKAGE_INSTALL_DIR="${1#*=}"
 
-                case $PACKAGE_INSTALL_ROOT in
-                    '') abort 1 "directory $PACKAGE_INSTALL_ROOT does not exist."
+                case $PACKAGE_INSTALL_DIR in
+                    '') abort 1 "directory $PACKAGE_INSTALL_DIR does not exist."
                         ;;
                     /*) ;;
-                    *)  PACKAGE_INSTALL_ROOT="$PWD/$PACKAGE_INSTALL_ROOT"
+                    *)  PACKAGE_INSTALL_DIR="$PWD/$PACKAGE_INSTALL_DIR"
                 esac
 
                 shift
@@ -927,30 +923,30 @@ EOF
                 ;;
         esac
 
-        if [ -z "$PACKAGE_INSTALL_ROOT" ] ; then
+        if [ -z "$PACKAGE_INSTALL_DIR" ] ; then
             [ -z "$HOME" ] && abort 1 'HOME environment is not set.'
 
-            PACKAGE_INSTALL_ROOT="$HOME/.xbuilder/installed"
+            PACKAGE_INSTALL_DIR="$HOME/.xbuilder/installed"
         fi
 
-        if [ -d  "$PACKAGE_INSTALL_ROOT/include" ] ; then
-            CPPFLAGS="-I$PACKAGE_INSTALL_ROOT/include $CPPFLAGS"
+        if [ -d  "$PACKAGE_INSTALL_DIR/include" ] ; then
+            CPPFLAGS="-I$PACKAGE_INSTALL_DIR/include $CPPFLAGS"
         fi
 
-        if [ -d  "$PACKAGE_INSTALL_ROOT/lib" ] ; then
-            LDFLAGS="-L$PACKAGE_INSTALL_ROOT/lib -Wl,-rpath,$PACKAGE_INSTALL_ROOT/lib $LDFLAGS"
+        if [ -d  "$PACKAGE_INSTALL_DIR/lib" ] ; then
+            LDFLAGS="-L$PACKAGE_INSTALL_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
         fi
 
-        if [ -d  "$PACKAGE_INSTALL_ROOT/bin" ] ; then
-            PATH="$PACKAGE_INSTALL_ROOT/bin:$PATH"
+        if [ -d  "$PACKAGE_INSTALL_DIR/bin" ] ; then
+            PATH="$PACKAGE_INSTALL_DIR/bin:$PATH"
         fi
 
-        if [ -d  "$PACKAGE_INSTALL_ROOT/sbin" ] ; then
-            PATH="$PACKAGE_INSTALL_ROOT/sbin:$PATH"
+        if [ -d  "$PACKAGE_INSTALL_DIR/sbin" ] ; then
+            PATH="$PACKAGE_INSTALL_DIR/sbin:$PATH"
         fi
 
-        if [ -d          "$PACKAGE_INSTALL_ROOT/share/aclocal" ] ; then
-            ACLOCAL_PATH="$PACKAGE_INSTALL_ROOT/share/aclocal:$ACLOCAL_PATH"
+        if [ -d          "$PACKAGE_INSTALL_DIR/share/aclocal" ] ; then
+            ACLOCAL_PATH="$PACKAGE_INSTALL_DIR/share/aclocal:$ACLOCAL_PATH"
         fi
 
         export CPPFLAGS
