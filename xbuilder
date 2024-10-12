@@ -659,6 +659,12 @@ install_the_given_package() {
 
     #########################################################################################
 
+    if [ "$DUMP_ENV" = 1 ] ; then
+        run export -p
+    fi
+
+    #########################################################################################
+
     if [ -n  "$PACKAGE_INSTALL" ] ; then
         eval "$PACKAGE_INSTALL"
     else
@@ -801,10 +807,6 @@ ${COLOR_GREEN}xbuilder install <PACKAGE-NAME>... [OPTIONS]${COLOR_OFF}
 
         ${COLOR_BLUE}-v-ld${COLOR_OFF}
             pass -v argument to the linker.
-
-
-${COLOR_GREEN}xbuilder exec [--prefix=<DIR>] <CMD>${COLOR_OFF}
-    execute command in environment.
 "
 }
 
