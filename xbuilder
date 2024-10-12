@@ -512,6 +512,10 @@ inspect_install_arguments() {
 
     #########################################################################################
 
+    LDFLAGS="$LDFLAGS -Wl,-rpath,$PACKAGE_INSTALL_ROOT/lib"
+
+    #########################################################################################
+
     for TOOL in CC CXX CPP AS AR RANLIB LD SYSROOT CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
     do
         export "${TOOL}"
@@ -612,20 +616,12 @@ install_the_given_package() {
 
     #########################################################################################
 
-    PACKAGE_WORKING_DIR="$SESSION_DIR/$1"
-
-    #########################################################################################
-
-    export ACLOCAL_PATH="$PACKAGE_WORKING_DIR/share/aclocal"
-    export CPPFLAGS="-I$PACKAGE_WORKING_DIR/include $CPPFLAGS"
-    export LDFLAGS="-L$PACKAGE_WORKING_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
-
-    if [ -d  "$PACKAGE_INSTALL_ROOT/include" ] ; then
+    if [ -d        "$PACKAGE_INSTALL_ROOT/include" ] ; then
         CPPFLAGS="-I$PACKAGE_INSTALL_ROOT/include $CPPFLAGS"
     fi
 
-    if [ -d  "$PACKAGE_INSTALL_ROOT/lib" ] ; then
-        LDFLAGS="-L$PACKAGE_INSTALL_ROOT/lib -Wl,-rpath,$PACKAGE_INSTALL_ROOT/lib $LDFLAGS"
+    if [ -d       "$PACKAGE_INSTALL_ROOT/lib" ] ; then
+        LDFLAGS="-L$PACKAGE_INSTALL_ROOT/lib $LDFLAGS"
     fi
 
     if [ -d  "$PACKAGE_INSTALL_ROOT/bin" ] ; then
@@ -636,19 +632,6 @@ install_the_given_package() {
         PATH="$PACKAGE_INSTALL_ROOT/sbin:$PATH"
     fi
 
-    if [ -d          "$PACKAGE_INSTALL_ROOT/share/aclocal" ] ; then
-        ACLOCAL_PATH="$PACKAGE_INSTALL_ROOT/share/aclocal:$ACLOCAL_PATH"
-    fi
-
-    for d in lib share
-    do
-        DEPENDENT_PACKAGE_PKGCONF_DIR="$PACKAGE_INSTALL_ROOT/$d/pkgconfig"
-
-        if [ -d "$DEPENDENT_PACKAGE_PKGCONF_DIR" ] ; then
-            PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$DEPENDENT_PACKAGE_PKGCONF_DIR"
-        fi
-    done
-
     #########################################################################################
 
     PACKAGE_SRC_FILETYPE="$(filetype_from_url "$PACKAGE_SRC_URL")"
@@ -658,6 +641,10 @@ install_the_given_package() {
     #########################################################################################
 
     wfetch "$PACKAGE_SRC_URL" --uri="$PACKAGE_SRC_URI" --sha256="$PACKAGE_SRC_SHA" -o "$PACKAGE_SRC_FILEPATH"
+
+    #########################################################################################
+
+    PACKAGE_WORKING_DIR="$SESSION_DIR/$1"
 
     #########################################################################################
 
