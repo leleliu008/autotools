@@ -285,9 +285,9 @@ jobs:
           ## how to install
 
           \`\`\`bash
-          sudo install -d -g \`id -g\` -o \`id -u\` /opt/autotools-\${{ needs.check.outputs.release-version }}-linux-glibc-x86_64
-          tar xPf autotools-\${{ needs.check.outputs.release-version }}-linux-glibc-x86_64.tar.xz
-          export PATH="/opt/autotools-\${{ needs.check.outputs.release-version }}-linux-glibc-x86_64/bin:$PATH"
+          sudo install -d -g \`id -g\` -o \`id -u\` /opt/autotools-${{ needs.check.outputs.release-version }}-linux-glibc-x86_64
+          tar xPf autotools-${{ needs.check.outputs.release-version }}-linux-glibc-x86_64.tar.xz
+          export PATH="/opt/autotools-${{ needs.check.outputs.release-version }}-linux-glibc-x86_64/bin:\$PATH"
           \`\`\`
 
           ## included softwares
