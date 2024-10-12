@@ -293,13 +293,7 @@ inspect_install_arguments() {
 
     unset ENABLE_LTO
 
-    unset ENABLE_STRIP
-
     unset REQUEST_TO_KEEP_SESSION_DIR
-
-    unset REQUEST_TO_UPGRADE_IF_POSSIBLE
-
-    unset REQUEST_TO_EXPORT_COMPILE_COMMANDS_JSON
 
     unset SPECIFIED_PACKAGE_LIST
 
@@ -314,21 +308,13 @@ inspect_install_arguments() {
 
     unset DEBUG_CC
     unset DEBUG_LD
-    unset DEBUG_GMAKE
-    unset DEBUG_PKG_CONFIG
 
     while [ -n "$1" ]
     do
         case $1 in
+            -x) set -x ;;
             -q) LOG_LEVEL=0 ;;
             -v) LOG_LEVEL=2
-
-                DUMP_ENV=1
-                DUMP_HTTP=1
-
-                VERBOSE_GMAKE=1
-                ;;
-            -x) LOG_LEVEL=3
 
                 DUMP_ENV=1
                 DUMP_HTTP=1
@@ -337,8 +323,6 @@ inspect_install_arguments() {
 
                 DEBUG_CC=1
                 DEBUG_LD=1
-                DEBUG_GMAKE=1
-                DEBUG_PKG_CONFIG=1
                 ;;
             -v-env)
                 DUMP_ENV=1
@@ -349,33 +333,11 @@ inspect_install_arguments() {
             -v-gmake)
                 VERBOSE_GMAKE=1
                 ;;
-            -x-sh)
-                set -x
-                ;;
-            -x-cc)
+            -v-cc)
                 DEBUG_CC=1
                 ;;
-            -x-ld)
+            -v-ld)
                 DEBUG_LD=1
-                ;;
-            -x-gmake)
-                DEBUG_GMAKE=1
-                ;;
-            -x-pkg-config)
-                DEBUG_PKG_CONFIG=1
-                ;;
-            --enable-lto)
-                ENABLE_LTO=1
-                ;;
-            --enable-strip)
-                ENABLE_STRIP=all
-                ;;
-            --enable-strip=*)
-                ENABLE_STRIP="${1#*=}"
-                case $ENABLE_STRIP in
-                    no|all|debug|unneeded) ;;
-                    *)  abort 1 "--strip=<VALUE>, VALUE must be one of no, all, debug, unneeded"
-                esac
                 ;;
             --profile=*)
                 PROFILE="${1#*=}"
@@ -409,8 +371,6 @@ inspect_install_arguments() {
                 BUILD_NJOBS="$1"
                 ;;
             -K) REQUEST_TO_KEEP_SESSION_DIR=1 ;;
-            -U) REQUEST_TO_UPGRADE_IF_POSSIBLE=1 ;;
-            -E) REQUEST_TO_EXPORT_COMPILE_COMMANDS_JSON=1 ;;
 
             -*) abort 1 "unrecognized option: $1"
                 ;;
@@ -463,18 +423,8 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    if [ -z "$PROFILE" ] ; then
-        PROFILE=release
-    fi
-
-    #########################################################################################
-
-    if [ -z "$ENABLE_STRIP" ] ; then
-        case $PROFILE in
-            debug)   ENABLE_STRIP=no  ;;
-            release) ENABLE_STRIP=all ;;
-        esac
-    fi
+    : ${PROFILE:=release}
+    : ${ENABLE_LTO:=1}
 
     #########################################################################################
 
@@ -548,6 +498,10 @@ inspect_install_arguments() {
             LDFLAGS="$LDFLAGS -Wl,-S"
         else
             LDFLAGS="$LDFLAGS -Wl,-s"
+        fi
+
+        if [ "$ENABLE_LTO" = 1 ] ; then
+            LDFLAGS="$LDFLAGS -flto"
         fi
     fi
 
@@ -662,10 +616,6 @@ install_the_given_package() {
 
     #########################################################################################
 
-    # override the default search directory (usually /usr/lib/pkgconfig:/usr/share/pkgconfig)
-    # because we only want to use our own
-    export PKG_CONFIG_LIBDIR="$PACKAGE_WORKING_DIR/lib/pkgconfig"
-    export PKG_CONFIG_PATH="$PACKAGE_WORKING_DIR/lib/pkgconfig"
     export ACLOCAL_PATH="$PACKAGE_WORKING_DIR/share/aclocal"
     export CPPFLAGS="-I$PACKAGE_WORKING_DIR/include $CPPFLAGS"
     export LDFLAGS="-L$PACKAGE_WORKING_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
@@ -879,14 +829,8 @@ ${COLOR_GREEN}xbuilder install <PACKAGE-NAME>... [OPTIONS]${COLOR_OFF}
         ${COLOR_BLUE}-j <N>${COLOR_OFF}
             specify the number of jobs you can run in parallel.
 
-        ${COLOR_BLUE}--flat${COLOR_OFF}
-            install packages into --prefix=<DIR> rather than --prefix=<DIR>/<PACKAGE-NAME>
-
         ${COLOR_BLUE}-E${COLOR_OFF}
             export compile_commands.json
-
-        ${COLOR_BLUE}-U${COLOR_OFF}
-            upgrade packages if possible.
 
         ${COLOR_BLUE}-K${COLOR_OFF}
             keep the session directory even if this packages are successfully installed.
@@ -897,12 +841,8 @@ ${COLOR_GREEN}xbuilder install <PACKAGE-NAME>... [OPTIONS]${COLOR_OFF}
         ${COLOR_BLUE}-v${COLOR_OFF}
             verbose mode. many messages will be output to terminal.
 
-            This option is equivalent to -v-* options all are supplied.
-
         ${COLOR_BLUE}-x${COLOR_OFF}
-            very verbose mode. many many messages will be output to terminal.
-
-            This option is equivalent to -v-* and -x-* options all are supplied.
+            debug current running shell.
 
         ${COLOR_BLUE}-v-env${COLOR_OFF}
             show all environment variables before starting to build.
@@ -910,26 +850,15 @@ ${COLOR_GREEN}xbuilder install <PACKAGE-NAME>... [OPTIONS]${COLOR_OFF}
         ${COLOR_BLUE}-v-http${COLOR_OFF}
             show http request/response.
 
-        ${COLOR_BLUE}-v-uppm${COLOR_OFF}
-            pass -v argument to uppm command.
-
         ${COLOR_BLUE}-v-gmake${COLOR_OFF}
             pass V=1 argument to gmake command.
 
-        ${COLOR_BLUE}-x-sh${COLOR_OFF}
-            set -x to debug current running shell.
+        ${COLOR_BLUE}-v-cc${COLOR_OFF}
+            pass -v argument to the C/C++ compiler.
 
-        ${COLOR_BLUE}-x-cc${COLOR_OFF}
-            pass -v argument to clang command.
+        ${COLOR_BLUE}-v-ld${COLOR_OFF}
+            pass -v argument to the linker.
 
-        ${COLOR_BLUE}-x-ld${COLOR_OFF}
-            pass -Wl,-v argument to linker.
-
-        ${COLOR_BLUE}-x-gmake${COLOR_OFF}
-            pass --debug argument to gmake command.
-
-        ${COLOR_BLUE}-x-pkg-config${COLOR_OFF}
-            export PKG_CONFIG_DEBUG_SPEW=1
 
 ${COLOR_GREEN}xbuilder exec [--prefix=<DIR>] <CMD>${COLOR_OFF}
     execute command in environment.
@@ -984,6 +913,10 @@ EOF
         do
             install_the_given_package "$PACKAGE_NAME"
         done
+
+        if [ "$REQUEST_TO_KEEP_SESSION_DIR" != 1 ] ; then
+            rm -rf "$SESSION_DIR"
+        fi
         ;;
     exec)
         shift
