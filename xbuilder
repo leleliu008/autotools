@@ -295,8 +295,6 @@ inspect_install_arguments() {
 
     unset ENABLE_STRIP
 
-    unset ENABLE_CCACHE
-
     unset REQUEST_TO_KEEP_SESSION_DIR
 
     unset REQUEST_TO_UPGRADE_IF_POSSIBLE
@@ -311,16 +309,12 @@ inspect_install_arguments() {
 
     unset DUMP_ENV
     unset DUMP_HTTP
-    unset DUMP_UPPM
 
     unset VERBOSE_GMAKE
 
     unset DEBUG_CC
     unset DEBUG_LD
-    unset DEBUG_GO
-    unset DEBUG_CARGO
     unset DEBUG_GMAKE
-    unset DEBUG_XMAKE
     unset DEBUG_PKG_CONFIG
 
     while [ -n "$1" ]
@@ -331,7 +325,6 @@ inspect_install_arguments() {
 
                 DUMP_ENV=1
                 DUMP_HTTP=1
-                DUMP_UPPM=1
 
                 VERBOSE_GMAKE=1
                 ;;
@@ -339,7 +332,6 @@ inspect_install_arguments() {
 
                 DUMP_ENV=1
                 DUMP_HTTP=1
-                DUMP_UPPM=1
 
                 VERBOSE_GMAKE=1
 
@@ -353,9 +345,6 @@ inspect_install_arguments() {
                 ;;
             -v-http)
                 DUMP_HTTP=1
-                ;;
-            -v-uppm)
-                DUMP_UPPM=1
                 ;;
             -v-gmake)
                 VERBOSE_GMAKE=1
@@ -374,10 +363,6 @@ inspect_install_arguments() {
                 ;;
             -x-pkg-config)
                 DEBUG_PKG_CONFIG=1
-                ;;
-
-            --disable-ccache)
-                ENABLE_CCACHE=0
                 ;;
             --enable-lto)
                 ENABLE_LTO=1
