@@ -381,17 +381,12 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    if [ -z "$SESSION_DIR" ] ; then
-        SESSION_DIR="$HOME/.xbuilder/run/$$"
-    fi
+    : ${PROFILE:=release}
+    : ${ENABLE_LTO:=1}
 
-    if [ -z "$DOWNLOAD_DIR" ] ; then
-        DOWNLOAD_DIR="$HOME/.xbuilder/downloads"
-    fi
-
-    if [ -z "$PACKAGE_INSTALL_DIR" ] ; then
-        PACKAGE_INSTALL_DIR="$HOME/.xbuilder/installed"
-    fi
+    : ${SESSION_DIR:="$HOME/.xbuilder/run/$$"}
+    : ${DOWNLOAD_DIR:="$HOME/.xbuilder/downloads"}
+    : ${PACKAGE_INSTALL_DIR:="$HOME/.xbuilder/installed"}
 
     #########################################################################################
 
@@ -423,8 +418,9 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    : ${PROFILE:=release}
-    : ${ENABLE_LTO:=1}
+    if [ -z "$GMAKE" ] ; then
+        GMAKE="$(command -v gmake || command -v make)" || abort 1 "command not found: gmake"
+    fi
 
     #########################################################################################
 
@@ -779,9 +775,6 @@ ${COLOR_GREEN}xbuilder install <PACKAGE-NAME>... [OPTIONS]${COLOR_OFF}
         ${COLOR_BLUE}-j <N>${COLOR_OFF}
             specify the number of jobs you can run in parallel.
 
-        ${COLOR_BLUE}-E${COLOR_OFF}
-            export compile_commands.json
-
         ${COLOR_BLUE}-K${COLOR_OFF}
             keep the session directory even if this packages are successfully installed.
 
@@ -851,10 +844,6 @@ EOF
         fi
         ;;
     install)
-        if [ -z "$GMAKE" ] ; then
-            GMAKE="$(command -v gmake || command -v make)" || abort 1 "command not found: gmake"
-        fi
-
         shift
 
         inspect_install_arguments "$@"
@@ -867,62 +856,6 @@ EOF
         if [ "$REQUEST_TO_KEEP_SESSION_DIR" != 1 ] ; then
             rm -rf "$SESSION_DIR"
         fi
-        ;;
-    exec)
-        shift
-
-        case $1 in
-            '') abort 1 'xbuilder exec <CMD> , <CMD> is unspecified.'
-                ;;
-            --prefix=*)
-                PACKAGE_INSTALL_DIR="${1#*=}"
-
-                case $PACKAGE_INSTALL_DIR in
-                    '') abort 1 "directory $PACKAGE_INSTALL_DIR does not exist."
-                        ;;
-                    /*) ;;
-                    *)  PACKAGE_INSTALL_DIR="$PWD/$PACKAGE_INSTALL_DIR"
-                esac
-
-                shift
-
-                [ -z "$1" ] && abort 1 'xbuilder exec --prefix=<DIR> <CMD> , <CMD> is unspecified.'
-                ;;
-        esac
-
-        if [ -z "$PACKAGE_INSTALL_DIR" ] ; then
-            [ -z "$HOME" ] && abort 1 'HOME environment is not set.'
-
-            PACKAGE_INSTALL_DIR="$HOME/.xbuilder/installed"
-        fi
-
-        if [ -d  "$PACKAGE_INSTALL_DIR/include" ] ; then
-            CPPFLAGS="-I$PACKAGE_INSTALL_DIR/include $CPPFLAGS"
-        fi
-
-        if [ -d  "$PACKAGE_INSTALL_DIR/lib" ] ; then
-            LDFLAGS="-L$PACKAGE_INSTALL_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
-        fi
-
-        if [ -d  "$PACKAGE_INSTALL_DIR/bin" ] ; then
-            PATH="$PACKAGE_INSTALL_DIR/bin:$PATH"
-        fi
-
-        if [ -d  "$PACKAGE_INSTALL_DIR/sbin" ] ; then
-            PATH="$PACKAGE_INSTALL_DIR/sbin:$PATH"
-        fi
-
-        if [ -d          "$PACKAGE_INSTALL_DIR/share/aclocal" ] ; then
-            ACLOCAL_PATH="$PACKAGE_INSTALL_DIR/share/aclocal:$ACLOCAL_PATH"
-        fi
-
-        export CPPFLAGS
-        export LDFLAGS
-        export PATH
-        export ACLOCAL_PATH
-
-        pwd
-        exec "$@"
         ;;
     *)  abort 1 "unrecognized argument: $1"
 esac
