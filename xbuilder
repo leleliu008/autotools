@@ -701,21 +701,6 @@ package_info_perl() {
     PACKAGE_INSTALL='run ./Configure "-Dprefix=$PACKAGE_INSTALL_DIR" -Dman1dir=none -Dman3dir=none -des -Dmake=gmake -Duselargefiles -Duseshrplib -Dusethreads -Dusenm=false -Dusedl=true && run "$GMAKE" "--jobs=$BUILD_NJOBS" && run "$GMAKE" install'
 }
 
-package_info_texinfo() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/texinfo/texinfo-7.1.tar.xz'
-    PACKAGE_SRC_SHA='deeec9f19f159e046fdf8ad22231981806dac332cc372f1c763504ad82b30953'
-    PACKAGE_DEP_PKG='perl'
-    PACKAGE_DOPATCH='sed -i.bak "/libintl/d" tp/Texinfo/XS/parsetexi/api.c'
-    PACKAGE_INSTALL='configure --with-included-regex --enable-threads=posix --disable-nls'
-}
-
-package_info_help2man() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/help2man/help2man-1.49.3.tar.xz'
-    PACKAGE_SRC_SHA='4d7e4fdef2eca6afe07a2682151cea78781e0a4e8f9622142d9f70c083a2fd4f'
-    PACKAGE_DEP_PKG='perl'
-    PACKAGE_INSTALL='configure'
-}
-
 package_info_autoconf() {
     PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz'
     PACKAGE_SRC_SHA='431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c'
@@ -753,29 +738,11 @@ package_info_gmake() {
     PACKAGE_DOTWEAK='run ln -s gmake bin/make'
 }
 
-package_info_patch() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/patch/patch-2.7.6.tar.xz'
-    PACKAGE_SRC_SHA='ac610bda97abe0d9f6b7c963255a11dcb196c25e337c61f94e4778d632f1d8fd'
-    PACKAGE_INSTALL='configure --disable-dependency-tracking --disable-gcc-warnings'
-}
-
 package_info_pkgconf() {
     PACKAGE_SRC_URL='https://distfiles.ariadne.space/pkgconf/pkgconf-2.3.0.tar.xz'
     PACKAGE_SRC_SHA='3a9080ac51d03615e7c1910a0a2a8df08424892b5f13b0628a204d3fcce0ea8b'
     PACKAGE_INSTALL='configure'
     PACKAGE_DOTWEAK='run ln -s pkgconf bin/pkg-config'
-}
-
-package_info_findutils() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/findutils/findutils-4.9.0.tar.xz'
-    PACKAGE_SRC_SHA='a2bfb8c09d436770edc59f50fa483e785b161a3b7b9d547573cb08065fd462fe'
-    PACKAGE_INSTALL='configure --disable-assert --without-selinux --with-included-regex'
-}
-
-package_info_diffutils() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/diffutils/diffutils-3.10.tar.xz'
-    PACKAGE_SRC_SHA='90e5e93cc724e4ebe12ede80df1634063c7a855692685919bfe60b556c9bd09e'
-    PACKAGE_INSTALL='configure --with-included-regex --disable-gcc-warnings'
 }
 
 
@@ -858,7 +825,7 @@ case $1 in
         printf '%s\n' "$XBUILDER_VERSION"
         ;;
     ls-available)
-        PACKAGE_NAMES='perl autoconf automake texinfo help2man libtool pkgconf patch gmake gm4'
+        PACKAGE_NAMES='perl autoconf automake libtool pkgconf gmake gm4'
 
         if [ "$2" = -v ] ; then
             for PACKAGE_NAME in $PACKAGE_NAMES
