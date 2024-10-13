@@ -512,7 +512,11 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    LD_ARGS="$LD_ARGS -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib"
+    PATH="$PACKAGE_INSTALL_DIR/bin:$PATH"
+
+    PP_ARGS="$PP_ARGS -I$PACKAGE_INSTALL_DIR/include"
+
+    LD_ARGS="$LD_ARGS -L$PACKAGE_INSTALL_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib"
 
     #########################################################################################
 
@@ -547,20 +551,6 @@ inspect_install_arguments() {
     unset LIBTOOLIZE
     unset M4
     unset MAKE
-
-    #########################################################################################
-
-    [ -d "$SESSION_DIR" ] || run install -d "$SESSION_DIR"
-
-    cat > "$SESSION_DIR/toolchain.txt" <<EOF
-     CC='$CC'
-    CXX='$CXX'
-     AS='$AS'
-     LD='$LD'
-     AR='$AR'
- RANLIB='$RANLIB'
-SYSROOT='$SYSROOT'
-EOF
 }
 
 configure() {
@@ -615,24 +605,6 @@ install_the_given_package() {
     if [ -f "$PACKAGE_INSTALL_DIR/$1.yml" ] ; then
         note "package '$1' already has been installed, skipped."
         return 0
-    fi
-
-    #########################################################################################
-
-    if [ -d        "$PACKAGE_INSTALL_DIR/include" ] ; then
-        CPPFLAGS="-I$PACKAGE_INSTALL_DIR/include $CPPFLAGS"
-    fi
-
-    if [ -d       "$PACKAGE_INSTALL_DIR/lib" ] ; then
-        LDFLAGS="-L$PACKAGE_INSTALL_DIR/lib $LDFLAGS"
-    fi
-
-    if [ -d  "$PACKAGE_INSTALL_DIR/bin" ] ; then
-        PATH="$PACKAGE_INSTALL_DIR/bin:$PATH"
-    fi
-
-    if [ -d  "$PACKAGE_INSTALL_DIR/sbin" ] ; then
-        PATH="$PACKAGE_INSTALL_DIR/sbin:$PATH"
     fi
 
     #########################################################################################
@@ -865,6 +837,18 @@ EOF
         do
             install_the_given_package "$PACKAGE_NAME"
         done
+
+        cat > "$PACKAGE_INSTALL_DIR/toolchain.txt" <<EOF
+     CC='$CC'
+    CXX='$CXX'
+     AS='$AS'
+     LD='$LD'
+     AR='$AR'
+ RANLIB='$RANLIB'
+SYSROOT='$SYSROOT'
+ CFLAGS='$CFLAGS'
+LDFLAGS='$LDFLAGS'
+EOF
 
         if [ "$REQUEST_TO_KEEP_SESSION_DIR" != 1 ] ; then
             rm -rf "$SESSION_DIR"
