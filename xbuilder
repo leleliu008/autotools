@@ -479,13 +479,8 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    if [ "$DEBUG_CC" = 1 ] ; then
-        CC_ARGS="$CC_ARGS -v"
-    fi
-
-    if [ "$DEBUG_LD" = 1 ] ; then
-         LD_ARGS="$LD_ARGS -Wl,-v"
-    fi
+    [ "$DEBUG_CC" = 1 ] && CC_ARGS="$CC_ARGS -v"
+    [ "$DEBUG_LD" = 1 ] && LD_ARGS="$LD_ARGS -Wl,-v"
 
     case $PROFILE in
         debug)
