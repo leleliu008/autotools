@@ -424,6 +424,10 @@ inspect_install_arguments() {
 
     #########################################################################################
 
+    unset CC_ARGS
+    unset PP_ARGS
+    unset LD_ARGS
+
     if [ "$NATIVE_OS_KIND" = 'darwin' ] ; then
         [ -z "$CC"      ] &&      CC="$(xcrun --sdk macosx --find clang)"
         [ -z "$CXX"     ] &&     CXX="$(xcrun --sdk macosx --find clang++)"
@@ -435,10 +439,9 @@ inspect_install_arguments() {
 
         NATIVE_OS_VERS="$(sw_vers -productVersion)"
 
-          CFLAGS="-isysroot $SYSROOT -mmacosx-version-min=$NATIVE_OS_VERS -arch $NATIVE_OS_ARCH -Qunused-arguments"
-        CXXFLAGS="-isysroot $SYSROOT -mmacosx-version-min=$NATIVE_OS_VERS -arch $NATIVE_OS_ARCH -Qunused-arguments"
-        CPPFLAGS="-isysroot $SYSROOT -Qunused-arguments"
-         LDFLAGS="-isysroot $SYSROOT -mmacosx-version-min=$NATIVE_OS_VERS -arch $NATIVE_OS_ARCH"
+        CC_ARGS="-isysroot $SYSROOT -mmacosx-version-min=$NATIVE_OS_VERS -arch $NATIVE_OS_ARCH -Qunused-arguments"
+        PP_ARGS="-isysroot $SYSROOT -Qunused-arguments"
+        LD_ARGS="-isysroot $SYSROOT -mmacosx-version-min=$NATIVE_OS_VERS -arch $NATIVE_OS_ARCH"
     else
         [ -z "$CC" ] && {
              CC="$(command -v cc  || command -v clang   || command -v gcc)" || abort 1 "C Compiler not found."
@@ -464,11 +467,10 @@ inspect_install_arguments() {
             RANLIB="$(command -v ranlib)" || abort 1 "command not found: ranlib"
         }
 
-          CFLAGS="-fPIC -fno-common"
-        CXXFLAGS="-fPIC -fno-common"
-        CPPFLAGS=
+        CC_ARGS="-fPIC -fno-common"
+
         # https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html
-         LDFLAGS="-Wl,--as-needed -Wl,-z,muldefs -Wl,--allow-multiple-definition"
+        LD_ARGS="-Wl,--as-needed -Wl,-z,muldefs -Wl,--allow-multiple-definition"
     fi
 
     #########################################################################################
@@ -478,37 +480,46 @@ inspect_install_arguments() {
     #########################################################################################
 
     if [ "$DEBUG_CC" = 1 ] ; then
-          CFLAGS="$CFLAGS -v"
-        CXXFLAGS="$CXXFLAGS -v"
+        CC_ARGS="$CC_ARGS -v"
     fi
 
     if [ "$DEBUG_LD" = 1 ] ; then
-         LDFLAGS="$LDFLAGS -Wl,-v"
+         LD_ARGS="$LD_ARGS -Wl,-v"
     fi
 
-    if [ "$PROFILE" = release ] ; then
-          CFLAGS="$CFLAGS -Os"
-        CXXFLAGS="$CXXFLAGS -Os"
-        
-        if [ "$NATIVE_OS_KIND" = 'darwin' ] ; then
-            LDFLAGS="$LDFLAGS -Wl,-S"
-        else
-            LDFLAGS="$LDFLAGS -Wl,-s"
-        fi
+    case $PROFILE in
+        debug)
+            CC_ARGS="$CC_ARGS -O0 -g"
+            ;;
+        release)
+            CC_ARGS="$CC_ARGS -Os"
 
-        if [ "$ENABLE_LTO" = 1 ] ; then
-            LDFLAGS="$LDFLAGS -flto"
-        fi
-    fi
+            if [ "$ENABLE_LTO" = 1 ] ; then
+                LD_ARGS="$LD_ARGS -flto"
+            fi
+
+            if [ "$NATIVE_OS_KIND" = darwin ] ; then
+                LD_ARGS="$LD_ARGS -Wl,-S"
+            else
+                LD_ARGS="$LD_ARGS -Wl,-s"
+            fi
+    esac
 
     case $NATIVE_OS_KIND in
-        netbsd)  LDFLAGS="$LDFLAGS -lpthread" ;;
-        openbsd) LDFLAGS="$LDFLAGS -lpthread" ;;
+        netbsd)  LD_ARGS="$LD_ARGS -lpthread" ;;
+        openbsd) LD_ARGS="$LD_ARGS -lpthread" ;;
     esac
 
     #########################################################################################
 
-    LDFLAGS="$LDFLAGS -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib"
+    LD_ARGS="$LD_ARGS -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib"
+
+    #########################################################################################
+
+      CFLAGS="$CC_ARGS   $CFLAGS"
+    CXXFLAGS="$CC_ARGS $CXXFLAGS"
+    CPPFLAGS="$PP_ARGS $CPPFLAGS"
+     LDFLAGS="$LD_ARGS  $LDFLAGS"
 
     #########################################################################################
 
