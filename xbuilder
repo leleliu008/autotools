@@ -511,7 +511,7 @@ inspect_install_arguments() {
 
     PP_ARGS="$PP_ARGS -I$PACKAGE_INSTALL_DIR/include"
 
-    LD_ARGS="$LD_ARGS -L$PACKAGE_INSTALL_DIR/lib -Wl,-rpath,$PACKAGE_INSTALL_DIR/lib"
+    LD_ARGS="$LD_ARGS -L$PACKAGE_INSTALL_DIR/lib"
 
     #########################################################################################
 
@@ -529,7 +529,10 @@ inspect_install_arguments() {
 
     #########################################################################################
 
-    # DO NOT use these environment variables
+    unset PKG_CONFIG_LIBDIR
+    unset PKG_CONFIG_PATH
+    unset PKG_CONFIG
+    unset ACLOCAL_PATH
 
     unset LIBS
 
@@ -546,6 +549,12 @@ inspect_install_arguments() {
     unset LIBTOOLIZE
     unset M4
     unset MAKE
+
+    # https://stackoverflow.com/questions/18476490/what-is-purpose-of-target-arch-variable-in-makefiles
+    unset TARGET_ARCH
+
+    # https://keith.github.io/xcode-man-pages/xcrun.1.html
+    unset SDKROOT
 }
 
 configure() {
