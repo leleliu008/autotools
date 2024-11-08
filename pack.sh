@@ -101,7 +101,9 @@ run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 
 [ -f cacert.pem ] && run export SSL_CERT_FILE="$PWD/cacert.pem"
 
-run ./xbuilder install automake libtool pkgconf gmake --prefix="$PREFIX"
+run ./build.sh install automake libtool pkgconf gmake --prefix="$PREFIX"
+
+run cp build.sh "$PREFIX/"
 
 case $2 in
     linux-glibc-*)
