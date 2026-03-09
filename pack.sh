@@ -94,8 +94,7 @@ TARGET_OS_KIND="${2%%-*}"
 
 __setup_$TARGET_OS_KIND
 
-XXXXXX="autotools-$1-$2"
-PREFIX="/opt/$XXXXXX"
+PREFIX='/opt/autotools'
 
 run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 
@@ -106,7 +105,7 @@ run ./build.sh install automake libtool pkgconf gmake --prefix="$PREFIX"
 run cp build.sh "$PREFIX/"
 
 case $2 in
-    linux-glibc-*)
+    linux-any-*)
         run cp -L `gcc -print-file-name=libcrypt.so.1` "$PREFIX/lib/"
         LIBPERL_DIR="$(patchelf --print-rpath          "$PREFIX/bin/perl")"
         LIBPERL_PATH="$LIBPERL_DIR/libperl.so"
@@ -114,4 +113,4 @@ case $2 in
         run patchelf --set-rpath "$PREFIX/lib" "$LIBPERL_PATH"
 esac
 
-run bsdtar cvaPf "$XXXXXX.tar.xz" "$PREFIX"
+run bsdtar cvaPf "autotools-$1-$2.tar.xz" "$PREFIX"
