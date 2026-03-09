@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2024-2024 刘富频
+# Copyright (c) 2024-2026 刘富频
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -683,41 +683,55 @@ EOF
 }
 
 package_info_perl() {
-    PACKAGE_SRC_URL='https://cpan.metacpan.org/authors/id/P/PE/PEVANS/perl-5.38.2.tar.xz'
-    PACKAGE_SRC_URI='https://distfiles.macports.org/perl5.38/perl-5.38.2.tar.xz'
-    PACKAGE_SRC_SHA='d91115e90b896520e83d4de6b52f8254ef2b70a8d545ffab33200ea9f1cf29e8'
+    PACKAGE_SRC_URL='https://www.cpan.org/src/5.0/perl-5.42.0.tar.xz'
+    PACKAGE_SRC_SHA='73cf6cc1ea2b2b1c110a18c14bbbc73a362073003893ffcedc26d22ebdbdd0c3'
     PACKAGE_INSTALL='run ./Configure "-Dprefix=$PACKAGE_INSTALL_DIR" -Dman1dir=none -Dman3dir=none -des -Dmake=gmake -Duselargefiles -Duseshrplib -Dusethreads -Dusenm=false -Dusedl=true && run "$GMAKE" "--jobs=$BUILD_NJOBS" && run "$GMAKE" install'
 }
 
 package_info_autoconf() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/autoconf/autoconf-2.71.tar.gz'
-    PACKAGE_SRC_SHA='431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c'
+    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.gz'
+    PACKAGE_SRC_SHA='afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e'
     PACKAGE_DEP_PKG='perl gm4'
     PACKAGE_INSTALL='configure'
 }
 
 package_info_automake() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/automake/automake-1.16.5.tar.xz'
-    PACKAGE_SRC_SHA='f01d58cd6d9d77fbdca9eb4bbd5ead1988228fdb73d6f7a201f5f8d6b118b469'
+    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/automake/automake-1.18.1.tar.xz'
+    PACKAGE_SRC_SHA='168aa363278351b89af56684448f525a5bce5079d0b6842bd910fdd3f1646887'
     PACKAGE_DEP_PKG='autoconf'
     PACKAGE_INSTALL='configure'
 }
 
 package_info_libtool() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/libtool/libtool-2.4.7.tar.xz'
-    PACKAGE_SRC_SHA='4f7f217f057ce655ff22559ad221a0fd8ef84ad1fc5fcb6990cecc333aa1635d'
+    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/libtool/libtool-2.5.4.tar.xz'
+    PACKAGE_SRC_SHA='f81f5860666b0bc7d84baddefa60d1cb9fa6fceb2398cc3baca6afaa60266675'
     PACKAGE_INSTALL='configure --enable-ltdl-install'
-    PACKAGE_DEP_PKG='gm4'
+    PACKAGE_DEP_PKG='gm4 gsed grep'
     PACKAGE_DOTWEAK='
 run ln -s libtool    bin/glibtool
 run ln -s libtoolize bin/glibtoolize
 '
 }
 
-package_info_gm4() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/m4/m4-1.4.19.tar.xz'
-    PACKAGE_SRC_SHA='63aede5c6d33b6d9b13511cd0be2cac046f2e70fd0a07aa9573a04a82783af96'
+package_info_grep() {
+    PACKAGE_SRC_URL='https://ftpmirror.gnu.org/gnu/grep/grep-3.12.tar.xz'
+    PACKAGE_SRC_SHA='2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9'
     PACKAGE_INSTALL='configure'
+    PACKAGE_DOTWEAK='gsed -i "s|bash|sh|" bin/[ef]grep'
+}
+
+package_info_gsed() {
+    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/sed/sed-4.9.tar.xz'
+    PACKAGE_SRC_SHA='6e226b732e1cd739464ad6862bd1a1aba42d7982922da7a53519631d24975181'
+    PACKAGE_INSTALL='configure --program-prefix=g'
+    PACKAGE_DOTWEAK='run ln -s gsed bin/sed'
+}
+
+package_info_gm4() {
+    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/m4/m4-1.4.21.tar.xz'
+    PACKAGE_SRC_SHA='f25c6ab51548a73a75558742fb031e0625d6485fe5f9155949d6486a2408ab66'
+    PACKAGE_INSTALL='configure --program-prefix=g'
+    PACKAGE_DOTWEAK='run ln -s gm4 bin/m4'
 }
 
 package_info_gmake() {
@@ -728,8 +742,8 @@ package_info_gmake() {
 }
 
 package_info_pkgconf() {
-    PACKAGE_SRC_URL='https://distfiles.ariadne.space/pkgconf/pkgconf-2.3.0.tar.xz'
-    PACKAGE_SRC_SHA='3a9080ac51d03615e7c1910a0a2a8df08424892b5f13b0628a204d3fcce0ea8b'
+    PACKAGE_SRC_URL='https://distfiles.ariadne.space/pkgconf/pkgconf-2.5.1.tar.xz'
+    PACKAGE_SRC_SHA='cd05c9589b9f86ecf044c10a2269822bc9eb001eced2582cfffd658b0a50c243'
     PACKAGE_INSTALL='configure'
     PACKAGE_DOTWEAK='run ln -s pkgconf bin/pkg-config'
 }

@@ -83,7 +83,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-version: ['14.1', '14.0', '13.4', '13.3', '13.2']
+        target-version: ['15.0', '14.3', '14.2', '14.1', '14.0', '13.5', '13.4', '13.3', '13.2']
 
     steps:
       - uses: actions/checkout@v4
@@ -110,7 +110,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-version: ['7.6', '7.5', '7.4', '7.3', '7.2']
+        target-version: ['7.8', '7.7', '7.6', '7.5', '7.4', '7.3', '7.2']
 
     steps:
       - uses: actions/checkout@v4
@@ -136,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-version: ['10.0', '9.4', '9.3', '9.2']
+        target-version: ['10.1', '10.0', '9.4', '9.3', '9.2']
 
     steps:
       - uses: actions/checkout@v4
@@ -165,7 +165,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-version: ['10.15', '11.0', '12.0', '13.0', '14.0', '15.0']
+        target-version: ['10.15', '11.0', '12.0', '13.0', '14.0', '15.0', '26.0']
 
     env:
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.target-version }}
@@ -190,7 +190,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target-version: ['10.15', '11.0', '12.0', '13.0', '14.0', '15.0']
+        target-version: ['10.15', '11.0', '12.0', '13.0', '14.0', '15.0', '26.0']
 
     env:
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.target-version }}
@@ -348,16 +348,6 @@ jobs:
               $SRC_SHA
           EOF
           done
-
-          cat >> notes.md <<EOF
-          \`\`\`
-
-          ## sha256sum
-
-          \`\`\`
-          $(sha256sum *.tar.xz)
-          \`\`\`
-          EOF
 
           # to avaid: failed to run git: fatal: not a git repository (or any of the parent directories): .git
           git -c init.defaultBranch=master init
