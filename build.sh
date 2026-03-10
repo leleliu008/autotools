@@ -700,6 +700,10 @@ package_info_automake() {
     PACKAGE_SRC_SHA='168aa363278351b89af56684448f525a5bce5079d0b6842bd910fdd3f1646887'
     PACKAGE_DEP_PKG='autoconf'
     PACKAGE_INSTALL='configure'
+    PACKAGE_DOTWEAK='
+run ln -sf  aclocal-1.18 bin/aclocal
+run ln -sf automake-1.18 bin/automake
+'
 }
 
 package_info_libtool() {
@@ -728,7 +732,11 @@ package_info_gsed() {
 
     if [ "$NATIVE_PLATFORM_KIND" = openbsd ] ; then
         NATIVE_PLATFORM_VERS="$(uname -r)"
+        note "NATIVE_PLATFORM_KIND=$NATIVE_PLATFORM_KIND"
+        note "NATIVE_PLATFORM_VERS=$NATIVE_PLATFORM_VERS"
+
         if [ "$NATIVE_PLATFORM_VERS" -ge 7.8 ] ; then
+            note "apply patch"
             PACKAGE_DOPATCH='sed -i "/^#elif FUNC_FFLUSH_STDIN/c #elif defined __OpenBSD__" gnulib-tests/fseeko.c'
         fi
     fi
