@@ -732,11 +732,11 @@ package_info_gsed() {
 
     if [ "$NATIVE_PLATFORM_KIND" = openbsd ] ; then
         NATIVE_PLATFORM_VERS="$(uname -r)"
-        note "NATIVE_PLATFORM_KIND=$NATIVE_PLATFORM_KIND"
-        note "NATIVE_PLATFORM_VERS=$NATIVE_PLATFORM_VERS"
 
-        if [ "$NATIVE_PLATFORM_VERS" -ge 7.8 ] ; then
-            note "apply patch"
+        #note "NATIVE_PLATFORM_KIND=$NATIVE_PLATFORM_KIND"
+        #note "NATIVE_PLATFORM_VERS=$NATIVE_PLATFORM_VERS"
+
+        if [ "$(bc -e "$NATIVE_PLATFORM_VERS >= 7.8")" = 1 ] ; then
             PACKAGE_DOPATCH='sed -i "/^#elif FUNC_FFLUSH_STDIN/c #elif defined __OpenBSD__" gnulib-tests/fseeko.c'
         fi
     fi
