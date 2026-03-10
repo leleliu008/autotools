@@ -737,7 +737,7 @@ package_info_gsed() {
         #note "NATIVE_PLATFORM_VERS=$NATIVE_PLATFORM_VERS"
 
         if [ "$(bc -e "$NATIVE_PLATFORM_VERS >= 7.8")" = 1 ] ; then
-            PACKAGE_DOPATCH='sed -i.bak "/^#elif FUNC_FFLUSH_STDIN/c\ #elif defined __OpenBSD__" gnulib-tests/fseeko.c'
+            PACKAGE_DOPATCH='sed -i.bak "/ FUNC_FFLUSH_STDIN /s|FUNC_FFLUSH_STDIN .*|defined __OpenBSD__|" gnulib-tests/fseeko.c'
         fi
     fi
 }
