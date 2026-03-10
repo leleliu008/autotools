@@ -689,21 +689,21 @@ package_info_perl() {
 }
 
 package_info_autoconf() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/autoconf/autoconf-2.72.tar.gz'
+    PACKAGE_SRC_URL='https://mirrors.kernel.org/gnu/autoconf/autoconf-2.72.tar.gz'
     PACKAGE_SRC_SHA='afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e'
     PACKAGE_DEP_PKG='perl gm4'
     PACKAGE_INSTALL='configure'
 }
 
 package_info_automake() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/automake/automake-1.18.1.tar.xz'
+    PACKAGE_SRC_URL='https://mirrors.kernel.org/gnu/automake/automake-1.18.1.tar.xz'
     PACKAGE_SRC_SHA='168aa363278351b89af56684448f525a5bce5079d0b6842bd910fdd3f1646887'
     PACKAGE_DEP_PKG='autoconf'
     PACKAGE_INSTALL='configure'
 }
 
 package_info_libtool() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/libtool/libtool-2.5.4.tar.xz'
+    PACKAGE_SRC_URL='https://mirrors.kernel.org/gnu/libtool/libtool-2.5.4.tar.xz'
     PACKAGE_SRC_SHA='f81f5860666b0bc7d84baddefa60d1cb9fa6fceb2398cc3baca6afaa60266675'
     PACKAGE_INSTALL='configure --enable-ltdl-install'
     PACKAGE_DEP_PKG='gm4 gsed grep'
@@ -721,21 +721,28 @@ package_info_grep() {
 }
 
 package_info_gsed() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/sed/sed-4.9.tar.xz'
+    PACKAGE_SRC_URL='https://mirrors.kernel.org/gnu/sed/sed-4.9.tar.xz'
     PACKAGE_SRC_SHA='6e226b732e1cd739464ad6862bd1a1aba42d7982922da7a53519631d24975181'
     PACKAGE_INSTALL='configure --program-prefix=g'
     PACKAGE_DOTWEAK='run ln -s gsed bin/sed'
+
+    if [ "$NATIVE_PLATFORM_KIND" = openbsd ] ; then
+        NATIVE_PLATFORM_VERS="$(uname -r)"
+        if [ "$NATIVE_PLATFORM_VERS" -ge 7.8 ] ; then
+            PACKAGE_DOPATCH='sed -i "/^#elif FUNC_FFLUSH_STDIN/c #elif defined __OpenBSD__" gnulib-tests/fseeko.c'
+        fi
+    fi
 }
 
 package_info_gm4() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/m4/m4-1.4.21.tar.xz'
+    PACKAGE_SRC_URL='https://mirrors.kernel.org/gnu/m4/m4-1.4.21.tar.xz'
     PACKAGE_SRC_SHA='f25c6ab51548a73a75558742fb031e0625d6485fe5f9155949d6486a2408ab66'
     PACKAGE_INSTALL='configure --program-prefix=g'
     PACKAGE_DOTWEAK='run ln -s gm4 bin/m4'
 }
 
 package_info_gmake() {
-    PACKAGE_SRC_URL='https://ftp.gnu.org/gnu/make/make-4.4.1.tar.gz'
+    PACKAGE_SRC_URL='https://mirrors.kernel.org/gnu/make/make-4.4.1.tar.gz'
     PACKAGE_SRC_SHA='dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3'
     PACKAGE_INSTALL='configure --program-prefix=g --without-guile --without-dmalloc'
     PACKAGE_DOTWEAK='run ln -s gmake bin/make'

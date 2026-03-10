@@ -102,7 +102,7 @@ run $sudo install -d -g `id -g -n` -o `id -u -n` "$PREFIX"
 
 run ./build.sh install automake libtool pkgconf gmake --prefix="$PREFIX"
 
-run cp build.sh "$PREFIX/"
+run cp build.sh pack.sh "$PREFIX/"
 
 case $2 in
     linux-any-*)
