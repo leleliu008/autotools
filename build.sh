@@ -720,7 +720,7 @@ run ln -s libtoolize bin/glibtoolize
 package_info_grep() {
     PACKAGE_SRC_URL='https://ftpmirror.gnu.org/gnu/grep/grep-3.12.tar.xz'
     PACKAGE_SRC_SHA='2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9'
-    PACKAGE_INSTALL='configure'
+    PACKAGE_INSTALL='configure --disable-perl-regexp'
     PACKAGE_DOTWEAK='gsed -i "s|bash|sh|" bin/[ef]grep'
 }
 
@@ -759,7 +759,7 @@ package_info_gmake() {
 package_info_pkgconf() {
     PACKAGE_SRC_URL='https://distfiles.ariadne.space/pkgconf/pkgconf-2.5.1.tar.xz'
     PACKAGE_SRC_SHA='cd05c9589b9f86ecf044c10a2269822bc9eb001eced2582cfffd658b0a50c243'
-    PACKAGE_INSTALL='configure'
+    PACKAGE_INSTALL='configure --disable-shared'
     PACKAGE_DOTWEAK='run ln -s pkgconf bin/pkg-config'
 }
 

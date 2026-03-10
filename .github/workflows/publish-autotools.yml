@@ -258,7 +258,7 @@ jobs:
 
           \`\`\`bash
           sudo install -d -g \`id -g\` -o \`id -u\` /opt/autotools
-          tar xPf autotools-${{ needs.check.outputs.release-version }}-linux-x86_64.tar.xz
+          tar xPf autotools-${{ needs.check.outputs.release-version }}-linux-any-x86_64.tar.xz
           export PATH="/opt/autotools/bin:\$PATH"
           \`\`\`
 
@@ -267,9 +267,9 @@ jobs:
           \`\`\`yaml
           EOF
 
-          tar xf autotools-${{ needs.check.outputs.release-version }}-linux-glibc-x86_64.tar.xz
+          tar xf autotools-${{ needs.check.outputs.release-version }}-linux-any-x86_64.tar.xz
 
-          for fp in opt/autotools-${{ needs.check.outputs.release-version }}-linux-glibc-x86_64/*.yml
+          for fp in opt/autotools-${{ needs.check.outputs.release-version }}-linux-any-x86_64/*.yml
           do
               fn=${fp##*/}
               PKGNAME=${fn%.yml}
