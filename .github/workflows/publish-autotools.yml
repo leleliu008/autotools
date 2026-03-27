@@ -58,7 +58,7 @@ jobs:
         target-version: ['6.4']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: vmactions/dragonflybsd-vm@v1
         with:
@@ -68,7 +68,7 @@ jobs:
           copyback: true
           run: ./pack.sh  ${{ needs.check.outputs.release-version }} dragonflybsd-${{ matrix.target-version }}-x86_64
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: autotools-${{ needs.check.outputs.release-version }}-dragonflybsd-${{ matrix.target-version }}-x86_64.tar.xz
           path: autotools-${{ needs.check.outputs.release-version }}-dragonflybsd-${{ matrix.target-version }}-x86_64.tar.xz
@@ -86,7 +86,7 @@ jobs:
         target-version: ['15.0', '14.3', '14.2', '14.1', '14.0', '13.5', '13.4', '13.3', '13.2']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: cross-platform-actions/action@master
         with:
@@ -95,7 +95,7 @@ jobs:
           shell: bash
           run: ./pack.sh  ${{ needs.check.outputs.release-version }} freebsd-${{ matrix.target-version }}-amd64
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: autotools-${{ needs.check.outputs.release-version }}-freebsd-${{ matrix.target-version }}-amd64.tar.xz
           path: autotools-${{ needs.check.outputs.release-version }}-freebsd-${{ matrix.target-version }}-amd64.tar.xz
@@ -113,7 +113,7 @@ jobs:
         target-version: ['7.8', '7.7', '7.6', '7.5', '7.4', '7.3', '7.2']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: cross-platform-actions/action@master
         with:
@@ -122,7 +122,7 @@ jobs:
           shell: bash
           run: ./pack.sh  ${{ needs.check.outputs.release-version }} openbsd-${{ matrix.target-version }}-amd64
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: autotools-${{ needs.check.outputs.release-version }}-openbsd-${{ matrix.target-version }}-amd64.tar.xz
           path: autotools-${{ needs.check.outputs.release-version }}-openbsd-${{ matrix.target-version }}-amd64.tar.xz
@@ -139,7 +139,7 @@ jobs:
         target-version: ['10.1', '10.0', '9.4', '9.3', '9.2']
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: curl -LO https://curl.se/ca/cacert.pem
 
@@ -150,7 +150,7 @@ jobs:
           shell: bash
           run: ./pack.sh  ${{ needs.check.outputs.release-version }} netbsd-${{ matrix.target-version }}-amd64
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: autotools-${{ needs.check.outputs.release-version }}-netbsd-${{ matrix.target-version }}-amd64.tar.xz
           path: autotools-${{ needs.check.outputs.release-version }}-netbsd-${{ matrix.target-version }}-amd64.tar.xz
@@ -172,11 +172,11 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: ${{ matrix.target-version }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: ./pack.sh    ${{ needs.check.outputs.release-version }} macos-${{ matrix.target-version }}-${{ matrix.target-arch }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: autotools-${{ needs.check.outputs.release-version }}-macos-${{ matrix.target-version }}-${{ matrix.target-arch }}.tar.xz
           path: autotools-${{ needs.check.outputs.release-version }}-macos-${{ matrix.target-version }}-${{ matrix.target-arch }}.tar.xz
@@ -194,7 +194,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - run: |
           case ${{ matrix.target-arch }} in
@@ -228,7 +228,7 @@ jobs:
 
       - run: mv ubuntu-rootfs/autotools-${{ needs.check.outputs.release-version }}-linux-any-${{ matrix.target-arch }}.tar.xz .
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: autotools-${{ needs.check.outputs.release-version }}-linux-any-${{ matrix.target-arch }}.tar.xz
           path: autotools-${{ needs.check.outputs.release-version }}-linux-any-${{ matrix.target-arch }}.tar.xz
@@ -244,7 +244,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: '*'
           path: .
